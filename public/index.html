@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Mini Chat Socket</title>
+    <style>
+      body { font-family: sans-serif; padding: 20px; }
+      ul { list-style: none; padding: 0; }
+      li { margin-bottom: 5px; }
+    </style>
+  </head>
+  <body>
+    <h2>Mini Chat</h2>
+    <input id="username" placeholder="Tu nombre" />
+    <ul id="messages"></ul>
+    <input id="input" autocomplete="off" placeholder="Escribí algo..." />
+    <button id="send">Enviar</button>
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+      const usernameInput = document.getElementById("username");
+      const input = document.getElementById("input");
+      const sendBtn = document.getElementById("send");
+      const messages = document.getElementById("messages");
+
+      sendBtn.onclick = () => {
+        const nombre = usernameInput.value.trim();
+        const mensaje = input.value.trim();
+
+        if (nombre === "" || mensaje === "") return;
+
+        socket.emit("chat message", {
+            user: nombre,
+            text: mensaje
+        });
+
+        input.value = "";
+    }
+
+      socket.on("chat message", (msg) => {
+        const item = document.createElement("li");
+        item.textContent = `${msg.user}: ${msg.text}`;
+        messages.appendChild(item);
+      });
+    </script>
+  </body>
+</html>
